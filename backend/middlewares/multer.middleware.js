@@ -58,11 +58,10 @@ const uploadForProducts = multer({
     storage: storageForProducts,
     limits: { fileSize: 5 * 1024 * 1024 }, // 5MB file size limit
     fileFilter: (req, file, cb) => {
-        const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
-        if (allowedTypes.includes(file.mimetype)) {
+        if (file.mimetype.startsWith('image/')) {
             cb(null, true);
         } else {
-            cb(new Error("Only image files are allowed"), false);
+            cb(new Error("Only image files are allowed: " + file.originalname), false);
         }
     },
 });

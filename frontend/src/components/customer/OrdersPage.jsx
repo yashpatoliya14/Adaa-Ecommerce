@@ -32,12 +32,12 @@ const OrdersPage = () => {
         .then((res)=>{
           
           if(res.data.success){
-              const addressUser = res.data.address[0]
-              setAddress(addressUser)  
-              console.log("this is " ,address);
-              
+              const addressUser = res.data.address?.[0];
+              if (addressUser) {
+                  setAddress(addressUser);  
+                  console.log("this is " ,address);
+              }
           }
-          
         })
       },[orders])
     useEffect(() => {

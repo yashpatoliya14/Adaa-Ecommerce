@@ -89,7 +89,6 @@ const addProduct = async (req, res) => {
                             publicId: publicId
                         });
 
-                        await fs.promises.unlink(file.path);
                         return result?.secure_url;
                     } catch (uploadError) {
                         console.error("Upload failed for file:", file.originalname, uploadError);
@@ -295,7 +294,6 @@ const uploadColorImages = async (req, files, productId, colorName) => {
                 publicId
             });
 
-            await fs.promises.unlink(file.path);
             return result?.secure_url;
         } catch (error) {
             console.error("Upload failed:", error);

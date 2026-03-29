@@ -1,6 +1,6 @@
 import { motion } from "framer-motion"
 import { useEffect, useState } from "react"
-import { useParams } from "react-router-dom"
+import { useParams, useNavigate } from "react-router-dom"
 import { FaLock } from "react-icons/fa"
 import axios from "axios"
 import { toast } from "react-toastify" // Import toastify
@@ -40,6 +40,7 @@ export default function Checkout() {
   const [selectedCountry, setSelectedCountry] = useState("")
   const [amount, setAmount] = useState(20000)
   const { userId } = useParams()
+  const navigate = useNavigate()
   const [isDisabled, setIsDisabled] = useState(true)
   const [isAddressHide,setIsAddressHide] =useState(false);
   // Create state to store address fields
@@ -177,7 +178,38 @@ export default function Checkout() {
         description: "Adaa Jaipur Payment",
         image: "https://avatars.githubusercontent.com/u/25058652?v=4",
         order_id: order.id,
-        callback_url: BACKEND_URL + "/api/paymentVerification",
+        handler: async function (response) {
+            try {
+                const verifyRes = await axios.post(
+                    BACKEND_URL + "/api/paymentVerification",
+                    {
+                        razorpay_order_id: response.razorpay_order_id,
+                        razorpay_payment_id: response.razorpay_payment_id,
+                        razorpay_signature: response.razorpay_signature
+                    },
+                    { withCredentials: true }
+                );
+                
+                if (verifyRes.data.success) {
+                    toast.success("Payment verified successfully!");
+                    navigate('/orders');
+                } else {
+                    toast.error(verifyRes.data.msg || "Payment verification failed");
+                    setIsDisabled(false);
+                }
+            } catch (err) {
+                console.error("Verification error:", err);
+                const errorMsg = err.response?.data?.msg || "Failed to verify payment";
+                toast.error(errorMsg);
+                setIsDisabled(false);
+            }
+        },
+        modal: {
+            ondismiss: function() {
+                setIsDisabled(false); // Enable button if user closes popup
+                toast.error("Payment cancelled");
+            }
+        },
         prefill: {
           name: user?.name || "",
           email: user?.email || "",

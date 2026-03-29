@@ -95,6 +95,9 @@ export default function DealerProductForm() {
 
     const handleImageUpload = (e) => {
         const files = Array.from(e.target.files)
+
+        if (files.length === 0) return;
+
         const color = formData.selectedColor
 
         if (!color) {

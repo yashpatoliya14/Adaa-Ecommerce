@@ -72,16 +72,16 @@ const paymentVerification = async (req, res) => {
         const userId = pendingData.userId;
 
         // Create orders from cart items (orders are only created AFTER payment succeeds)
-        const cartItems = await Cart.find({ userId: new ObjectId(userId) }).populate('productId');
+        const cartItems = await Cart.find({ userId: userId }).populate('productId');
 
         let orderIds = [];
 
         if (cartItems.length > 0) {
             const orderDocs = cartItems.map(item => ({
                 userId: userId,
-                productId: new ObjectId(item.productId._id),
-                price: item.productId.price,
-                discount: item.productId.discountPercent || 0,
+                productId: item.productId?._id,
+                price: item.productId?.price || 0,
+                discount: item.productId?.discountPercent || 0,
                 quantity: item.quantity,
                 orderType: 'normal',
                 paymentMethod: 'Razorpay',
@@ -95,15 +95,19 @@ const paymentVerification = async (req, res) => {
 
             // Decrease stock for each product
             for (const item of cartItems) {
-                await Product.findByIdAndUpdate(item.productId._id, {
-                    $inc: { stock: -item.quantity }
-                });
+                if (item.productId) {
+                    await Product.findByIdAndUpdate(item.productId._id, {
+                        $inc: { stock: -item.quantity }
+                    });
+                }
             }
 
             // Clear the cart
-            await Cart.deleteMany({ userId: new ObjectId(userId) });
+            await Cart.deleteMany({ userId: userId });
 
-            updateProductsUsingSocketIo();
+            try {
+                updateProductsUsingSocketIo();
+            } catch(e) { console.error("Socket emit failed", e); }
         }
 
         // Save the payment record with all linked order IDs
@@ -120,11 +124,11 @@ const paymentVerification = async (req, res) => {
         // Clean up pending entry
         await PendingPayment.deleteOne({ _id: pendingData._id });
 
-        return res.redirect(`${process.env.CLIENT_URL}/orders`);
+        return res.status(200).json({ success: true, message: "Payment verified successfully" });
 
     } catch (err) {
-        console.log(err);
-        res.status(500).json({ success: false, msg: "Payment verification error" });
+        console.log("PAYMENT VERIFICATION ERROR:", err);
+        return res.status(500).json({ success: false, msg: "Payment verification error: " + err.message, stack: err.stack });
     }
 };
 
