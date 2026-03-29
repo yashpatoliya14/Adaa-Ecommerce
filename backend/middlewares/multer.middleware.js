@@ -68,9 +68,5 @@ const uploadForProducts = multer({
 });
 
 
-
-
-
-
 module.exports = upload;
 module.exports = uploadForProducts;

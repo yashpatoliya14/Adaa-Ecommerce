@@ -158,33 +158,32 @@ export default function Checkout() {
     try {
       const addressResponse = await axios.post(BACKEND_URL + "/api/address", address, { withCredentials: true })
 
-      setAmount(localStorage.getItem("totalCart"))
+      const totalAmount = Number(localStorage.getItem("totalCart")) || 0;
       const {
         data: { order },
       } = await axios.post(
           BACKEND_URL + "/api/payment",
           {
-            amount,
+            amount: totalAmount,
           },
           { withCredentials: true },
       )
 
       const options = {
-        key: RAZOR_API_KEY, // Use key to make Razorpay payment call
-        amount: order.amount, // Amount from the backend order response
+        key: RAZOR_API_KEY,
+        amount: order.amount,
         currency: "INR",
         name: "adaa-jaipur",
-        description: "Tutorial of RazorPay",
+        description: "Adaa Jaipur Payment",
         image: "https://avatars.githubusercontent.com/u/25058652?v=4",
         order_id: order.id,
-        callback_url: BACKEND_URL + "/api/paymentVerification", // Ensure this endpoint exists and works
+        callback_url: BACKEND_URL + "/api/paymentVerification",
         prefill: {
-          name: "Gaurav Kumar",
-          email: "gaurav.kumar@example.com",
-          contact: "9999999999",
+          name: user?.name || "",
+          email: user?.email || "",
         },
         notes: {
-          address: "Razorpay Corporate Office",
+          address: "Adaa Jaipur",
         },
         theme: {
           color: "#121212",
@@ -192,27 +191,13 @@ export default function Checkout() {
       }
 
       // Open Razorpay checkout
+      // Orders are created server-side only after payment is verified
       const razor = new window.Razorpay(options)
       razor.open()
-    //-------------------------------------------post all orders which in cart  ------------------------
-
-      const addAllCartItems = await axios.post(
-          `${BACKEND_URL}/api/orders/addAllProductsOfCart`,
-          {},
-          { withCredentials: true },
-      )
-      
-    //-------------------------------------------assign delivery boy ------------------------
-    const deliveryBoy = await axios.post(
-      `${BACKEND_URL}/api/delivery/${user?.id}`,
-      {orders:addAllCartItems.data.ordersItems},
-      { withCredentials: true },
-    ) 
-
-
 
     } catch (error) {
       console.error("Error during payment initiation:", error)
+      toast.error("Payment initiation failed. Please try again.")
     } finally {
       setIsDisabled(false)
     }

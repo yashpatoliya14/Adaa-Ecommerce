@@ -58,9 +58,9 @@ const uploadOnCloudinaryForProducts = async (localFilePath, dealerAndProductDeta
         });
 
         // Clean up local file
-        // if (response && fs.existsSync(localFilePath)) {
-        //     fs.unlinkSync(localFilePath);
-        // }
+        if (response && fs.existsSync(localFilePath)) {
+            fs.unlinkSync(localFilePath);
+        }
 
         return response;
     } catch (error) {
@@ -84,7 +84,6 @@ const deleteCloudinaryImageFromUrl = async (imageUrl) => {
         // https://res.cloudinary.com/<cloud_name>/image/upload/v1620000000/myfolder/myimage.jpg
         // The public ID would be: "myfolder/myimage"
         const parts = imageUrl.split('/');
-        const fileWithVersion = parts.pop(); // e.g., myimage.jpg
         const folderPath = parts.slice(parts.indexOf('upload') + 1).join('/'); // e.g., v1620000000/myfolder
         // Adjust extraction logic as needed based on your URL structure.
         // For a more robust solution, consider storing the public ID along with the image URL.

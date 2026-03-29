@@ -34,7 +34,6 @@ Fashion enthusiasts looking for an intuitive and efficient e-commerce shopping e
 
 * **Admin**: Manage users, products, and orders, update static frontend images.
 * **Dealer**: Manage product listings, inventory, and add color-wise photos.
-* **Delivery Boy**: Track and manage deliveries.
 * **Customer**: Browse products, place orders, track deliveries, and manage their account.
 * **Visitor**: View product listings and details without login; limited interaction with the platform.
 

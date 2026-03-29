@@ -14,18 +14,6 @@ async function changeProfilePicture(req, res) {
         if (!user) {
             return res.status(400).json({message: 'No user found'});
         }
-        // const localFilePath = req.file.path; // Path to the uploaded file in ./public/temp
-        // const response = await uploadOnCloudinary(localFilePath, `profile_pictures/${user._id}`);
-        // if (response) {
-        //     user.profilePicture = response.url;
-        //     await user.save();
-        //     res.status(200).json({
-        //         message: 'File uploaded successfully to Cloudinary',
-        //         url: response.url
-        //     });
-        // } else {
-        //     res.status(500).json({error: 'Failed to upload file to Cloudinary'});
-        // }
 
         const response = await changePfp(req.file,user);
         if (response.error) {

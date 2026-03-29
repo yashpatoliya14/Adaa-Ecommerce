@@ -13,6 +13,22 @@ const paymentSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-});
+  orders: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Orders",
+  }],
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
+  amount: {
+    type: Number,
+  },
+  status: {
+    type: String,
+    enum: ["success", "failed"],
+    default: "success",
+  },
+}, { timestamps: true });
 
-module.exports =  mongoose.model("Payment", paymentSchema);
+module.exports = mongoose.model("Payment", paymentSchema);

@@ -118,7 +118,7 @@ const OrdersPage = () => {
                                             darkMode ? "bg-gray-800" : "bg-white"
                                         } ring-1 ring-black ring-opacity-5 z-10`}
                                     >
-                                        {["all", "processing", "in transit", "delivered"].map((status) => (
+                                        {["all", "success", "Delivered", "Cancelled"].map((status) => (
                                             <button
                                                 key={status}
                                                 onClick={() => {
@@ -143,7 +143,7 @@ const OrdersPage = () => {
                     {filteredOrders.length > 0 ? (
                         <motion.div layout className="space-y-6">
                             {filteredOrders.map((order) => (
-                                <OrderCard key={order._id} order={order} address={address} darkMode={darkMode} />
+                                <OrderCard key={order._id} order={order} address={address} darkMode={darkMode} onOrderUpdate={fetchOrders} />
                             ))}
                         </motion.div>
                     ) : (

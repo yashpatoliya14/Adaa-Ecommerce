@@ -36,8 +36,7 @@ import ConfirmCode from "./components/auth/ConfirmCode.jsx";
 import DealerProducts from "./components/dealer/DealerProducts.jsx";
 import DealerProductDetail from "./components/dealer/DealerProductDetail.jsx";
 import DealerProductForm from "./components/dealer/DealerProductForm.jsx";
-import DeliveryList from "./components/deliveryBoy/DeliveryList.jsx";
-import DeliveryDetails from "./components/deliveryBoy/DeliveryDetails.jsx";
+
 import AdminPanel from "./components/admin/AdminPanel.jsx";
 import UserDetails from "./components/admin/UserDetails.jsx";
 import ProtectedRoute from './ProtectedRoute.jsx';
@@ -169,17 +168,7 @@ function App() {
                                     </ProtectedRoute>
                                 } />
 
-                                {/* Delivery Boy Routes */}
-                                <Route path="/delivery" element={
-                                    <ProtectedRoute allowedRoles={["delivery"]}>
-                                        <DeliveryList />
-                                    </ProtectedRoute>
-                                } />
-                                <Route path="/delivery/:id" element={
-                                    <ProtectedRoute allowedRoles={["delivery"]}>
-                                        <DeliveryDetails />
-                                    </ProtectedRoute>
-                                } />
+
 
                                 {/* Unauthorized Page */}
                                 <Route path="/unauthorized" element={<Unauthorized />} />
