@@ -12,7 +12,7 @@ const userSchema = mongoose.Schema(
         otp: {type: String},
         role: {
             type: [String],
-            enum: ["customer", "dealer", "Delivery Boy","admin"],
+            enum: ["customer", "dealer", "delivery","admin"],
             default: ["customer"]
         },
         status: {type: String, default: 'active'},

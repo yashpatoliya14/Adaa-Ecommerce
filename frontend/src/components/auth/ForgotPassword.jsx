@@ -19,10 +19,9 @@ function ForgotPassword() {
             return;
         }
         setErrors('');
-
         // Assume you already have the email sent earlier
         const email = localStorage.getItem('email'); // Retrieve email from storage
-
+        console.log(email);
         fetch(BACKEND_URL + '/api/login/verify-otp-forgot', {
             method: 'POST',
             headers: {
@@ -32,7 +31,6 @@ function ForgotPassword() {
         })
             .then((res) => res.json())
             .then((data) => {
-                console.log(data);
 
                 if (data.success) {
                     localStorage.setItem('authToken', data.token)

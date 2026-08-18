@@ -105,7 +105,6 @@ const sendOtpForgotPassword = async (req, res) => {
 
         //userModel exists or not
         const User = await userModel.findOne({email});
-
         if (!User) {
             return res.json({success: false, msg: "User doesn't exists"});
         }

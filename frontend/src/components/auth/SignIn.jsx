@@ -16,6 +16,7 @@ function SignIn() {
 
   const [errors, setErrors] = useState({});
   const [loading,setLoading] = useState(false);
+  const [isForgotLoading,setIsForgotLoading] = useState(false);
   const navigate = useNavigate()
     const dispatch = useDispatch();
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
@@ -42,7 +43,6 @@ function SignIn() {
       validate(name, value);
   };
 const validateForm = ()=>{
-  console.log(formData);
 
   if(!formData.email && !formData.password){
     setErrors(prev => ({...prev ,"password":"Please enter Password"}))
@@ -62,7 +62,9 @@ const validateForm = ()=>{
 
     if(!formData.email){
       setErrors({"email":"Please Enter Email"})
+      return ;
     }
+    setIsForgotLoading(true)
     fetch(BACKEND_URL+ '/api/login/send-otp-forgot', {
       method: 'POST',
       headers: {
@@ -74,10 +76,10 @@ const validateForm = ()=>{
     .then((data) => {
       if (data.success) {
           toast(data.msg);
+          localStorage.setItem('email', formData.email);
           navigate('/forgot-password'); // Redirect to home page after successful OTP verification
 
       } else {
-          console.log(data);
           toast(data.msg)
           setErrors('Please try again.');
       }
@@ -85,7 +87,11 @@ const validateForm = ()=>{
     .catch((err) => {
         console.log(err);
         setErrors('Error verifying OTP.');
-    });
+    })
+    .finally(()=>{
+    setIsForgotLoading(false)
+
+    })
   }
   const handleSubmit = (e) => {
       e.preventDefault();
@@ -132,7 +138,7 @@ const validateForm = ()=>{
 
   return (
     <div className="flex min-h-[calc(100vh-4rem)]">
-        <LoadingBar isLoading={isDisabled} />
+        <LoadingBar isLoading={isDisabled || isForgotLoading} />
       <div className="flex-1 hidden lg:block">
         <img
           src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=800&h=1200&fit=crop"
@@ -219,10 +225,11 @@ const validateForm = ()=>{
                 Register Now
               </Link>
               <button
-                className="text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300 transition-colors duration-200"
+                className="text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={handleForgot}
+                disabled={isForgotLoading}
               >
-                Forgot Password?
+                {isForgotLoading ? 'Sending...' : 'Forgot Password?'}
               </button>
             </div>
           </form>
